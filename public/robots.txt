@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.hytruckjob.com/sitemap.xml
+Sitemap: https://hytruckjob.com/sitemap.xml
