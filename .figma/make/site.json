@@ -1,0 +1,10 @@
+{
+  "description": "Facilitates multilingual job applications for long-distance truck drivers with required licenses, targeting diverse European and Arabic speakers for German jobs.",
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  },
+  "robots": {
+    "index": true
+  }
+}
