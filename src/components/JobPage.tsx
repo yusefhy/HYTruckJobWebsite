@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import emailjs from '@emailjs/browser';
 import logoImg from '../assets/logo-original.png';
 import { qualificationCopy } from '../qualification';
+import { getTrackingConsent, saveTrackingConsent, trackApplication } from '../tracking';
 
 const BenefitIcons: Record<string, React.ReactElement> = {
   salary: (
@@ -98,6 +99,7 @@ export default function JobPage({ lang }: { lang: Lang }) {
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [trackingConsent, setTrackingConsent] = useState<boolean | null>(getTrackingConsent);
 
   const EMAILJS_SERVICE_ID  = 'service_qd2ofde';
   const EMAILJS_TEMPLATE_ID = 'template_aeuy6zo';
@@ -140,9 +142,7 @@ export default function JobPage({ lang }: { lang: Lang }) {
         { publicKey: EMAILJS_PUBLIC_KEY },
       );
       setSubmitted(true);
-      const trackingWindow = window as Window & { dataLayer?: Record<string, unknown>[] };
-      trackingWindow.dataLayer = trackingWindow.dataLayer || [];
-      trackingWindow.dataLayer.push({ event: 'hytruckjob_application_sent', language: lang });
+      trackApplication(lang);
     } catch (err: any) {
       console.error('EmailJS error:', err);
       alert(`Error: ${JSON.stringify(err?.text || err?.message || err)}`);
@@ -639,6 +639,17 @@ export default function JobPage({ lang }: { lang: Lang }) {
       </section>
 
       {/* FOOTER */}
+      {trackingConsent === null && (
+        <div role="dialog" aria-label="Cookies" className="fixed bottom-0 left-0 right-0 z-50 p-4 shadow-xl" style={{ background: '#1A1A1A', borderTop: '1px solid #00A8E1' }}>
+          <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center gap-4 justify-between text-sm">
+            <p>{lang === 'es' ? 'Usamos cookies de medición de Google Ads solo si las aceptas. Puedes enviar la solicitud aunque las rechaces.' : 'We use Google Ads measurement cookies only if you accept. You can apply without accepting.'} <a href="/privacy/" className="underline">{qualificationCopy[lang].policy}</a></p>
+            <div className="flex gap-3 flex-shrink-0">
+              <button type="button" className="px-4 py-2 border border-gray-500" onClick={() => { saveTrackingConsent(false); setTrackingConsent(false); }}>{lang === 'es' ? 'Rechazar' : 'Reject'}</button>
+              <button type="button" className="px-4 py-2" style={{ background: '#00A8E1' }} onClick={() => { saveTrackingConsent(true); setTrackingConsent(true); }}>{lang === 'es' ? 'Aceptar' : 'Accept'}</button>
+            </div>
+          </div>
+        </div>
+      )}
       <footer style={{ background: '#0A0A0A', borderTop: '1px solid #1A1A1A' }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
@@ -650,6 +661,7 @@ export default function JobPage({ lang }: { lang: Lang }) {
             </div>
             <p className="text-xs" style={{ color: '#3A3A3A', fontFamily: 'Barlow, sans-serif' }}>{t.footer.rights}</p>
             <a href="/privacy/" className="text-xs underline" style={{ color: '#8A8A8A' }}>{qualificationCopy[lang].policy}</a>
+            <button type="button" className="text-xs underline" style={{ color: '#8A8A8A' }} onClick={() => setTrackingConsent(null)}>{lang === 'es' ? 'Configurar cookies' : 'Cookie settings'}</button>
           </div>
         </div>
       </footer>
