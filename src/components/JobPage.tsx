@@ -330,7 +330,7 @@ export default function JobPage({ lang }: { lang: Lang }) {
       </div>
 
       {/* BENEFITS */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-16 md:py-24">
+      <section id="benefits" className="max-w-6xl mx-auto px-4 sm:px-6 py-16 md:py-24">
         <h2 className="text-3xl md:text-5xl font-black uppercase mb-12 text-center"
           style={{ fontFamily: 'Barlow Condensed, sans-serif', color: '#F0F0F0', letterSpacing: '-0.01em' }}>
           {t.benefits.title}
