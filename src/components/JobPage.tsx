@@ -110,7 +110,9 @@ export default function JobPage({ lang }: { lang: Lang }) {
     const e: FormErrors = {};
     if (!form.firstName.trim()) e.firstName = t.form.required;
     if (!form.lastName.trim()) e.lastName = t.form.required;
+    const phoneDigits = form.phone.replace(/\D/g, '').length;
     if (!form.phone.trim()) e.phone = t.form.required;
+    else if (phoneDigits < 8 || phoneDigits > 15) e.phone = siteCopy[lang].invalidPhone;
     if (form.cap !== 'yes') e.cap = qualificationCopy[lang].required;
     if (!form.experience) e.experience = t.form.required;
     if (form.licence !== 'yes') e.licence = qualificationCopy[lang].required;
@@ -481,6 +483,8 @@ export default function JobPage({ lang }: { lang: Lang }) {
                   <p className="text-xs mb-2" style={{ color: '#5A5A5A', fontFamily: 'Barlow, sans-serif' }}>{t.form.phoneHelp}</p>
                   <input
                     type="tel"
+                    autoComplete="tel"
+                    inputMode="tel"
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
                     className="w-full px-4 py-3 text-sm outline-none transition-all"
