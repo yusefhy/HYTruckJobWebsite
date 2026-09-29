@@ -111,8 +111,7 @@ export default function JobPage({ lang }: { lang: Lang }) {
     if (!form.firstName.trim()) e.firstName = t.form.required;
     if (!form.lastName.trim()) e.lastName = t.form.required;
     if (!form.phone.trim()) e.phone = t.form.required;
-    if (!form.city) e.city = t.form.required;
-    if (!form.cap) e.cap = t.form.required;
+    if (form.cap !== 'yes') e.cap = qualificationCopy[lang].required;
     if (!form.experience) e.experience = t.form.required;
     if (form.licence !== 'yes') e.licence = qualificationCopy[lang].required;
     if (form.workAuthorization !== 'yes') e.workAuthorization = qualificationCopy[lang].required;
@@ -132,7 +131,7 @@ export default function JobPage({ lang }: { lang: Lang }) {
         {
           from_name:  `${form.firstName} ${form.lastName}`,
           phone:       form.phone,
-          city:        form.city,
+          city:        form.city || 'Sin preferencia',
           cap:         form.cap === 'yes' ? 'Sí' : 'No',
           experience:  form.experience === 'yes' ? 'Sí' : 'No',
           licence_ce: 'Sí',
@@ -500,7 +499,7 @@ export default function JobPage({ lang }: { lang: Lang }) {
                 {/* City */}
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#8A8A8A', fontFamily: 'Barlow, sans-serif' }}>
-                    {t.form.city} *
+                    {t.form.city}
                   </label>
                   <div className="relative">
                     <select
@@ -517,7 +516,7 @@ export default function JobPage({ lang }: { lang: Lang }) {
                       onFocus={(e) => (e.currentTarget.style.borderColor = '#00A8E1')}
                       onBlur={(e) => (e.currentTarget.style.borderColor = errors.city ? '#00A8E1' : '#2A2A2A')}
                     >
-                      <option value="" disabled style={{ color: '#5A5A5A' }}>{t.form.cityPlaceholder}</option>
+                      <option value="" style={{ color: '#5A5A5A' }}>{t.form.cityPlaceholder}</option>
                       {GERMAN_CITIES.map((city) => (
                         <option key={city} value={city} style={{ background: '#1A1A1A', color: '#F0F0F0' }}>{city}</option>
                       ))}
