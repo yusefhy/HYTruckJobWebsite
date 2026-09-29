@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import emailjs from '@emailjs/browser';
 import logoImg from '../assets/logo-original.png';
 import { qualificationCopy } from '../qualification';
+import { siteCopy } from '../siteCopy';
 import { getTrackingConsent, saveTrackingConsent, trackApplication } from '../tracking';
 
 const BenefitIcons: Record<string, React.ReactElement> = {
@@ -398,19 +399,15 @@ export default function JobPage({ lang }: { lang: Lang }) {
 
             {/* Requirements checklist */}
             <div className="space-y-3">
-              {[
-                { icon: '✓', text: lang === 'ar' ? 'رخصة قيادة C+E (مقطورة)' : lang === 'el' ? 'Δίπλωμα C+E (αρθρωτό)' : lang === 'ru' ? 'Права C+E (сочленённый)' : lang === 'uk' ? 'Права C+E (зчленований)' : 'Carnet C+E (articulado)' },
-                { icon: '✓', text: lang === 'ar' ? 'الرمز 95 / CAP ساري المفعول' : lang === 'el' ? 'Κωδικός 95 / CAP σε ισχύ' : lang === 'ru' ? 'Код 95 / CAP (действителен)' : lang === 'uk' ? 'Код 95 / CAP (дійсний)' : 'CAP / Código 95 en vigor' },
-                { icon: '✓', text: lang === 'ar' ? 'تصريح عمل في الاتحاد الأوروبي' : lang === 'el' ? 'Άδεια εργασίας ΕΕ' : lang === 'ru' ? 'Разрешение на работу в ЕС' : lang === 'uk' ? 'Дозвіл на роботу в ЄС' : 'Permiso de trabajo en la UE' },
-              ].map((req) => (
-                <div key={req.text} className="flex items-center gap-3">
+              {siteCopy[lang].requirements.map((req) => (
+                <div key={req} className="flex items-center gap-3">
                   <div className="w-6 h-6 flex-shrink-0 flex items-center justify-center rounded-sm"
                     style={{ background: '#00A8E1' }}>
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="20 6 9 17 4 12"/>
                     </svg>
                   </div>
-                  <span className="text-sm" style={{ color: '#B0B0B0', fontFamily: 'Barlow, sans-serif' }}>{req.text}</span>
+                  <span className="text-sm" style={{ color: '#B0B0B0', fontFamily: 'Barlow, sans-serif' }}>{req}</span>
                 </div>
               ))}
             </div>
@@ -642,10 +639,10 @@ export default function JobPage({ lang }: { lang: Lang }) {
       {trackingConsent === null && (
         <div role="dialog" aria-label="Cookies" className="fixed bottom-0 left-0 right-0 z-50 p-4 shadow-xl" style={{ background: '#1A1A1A', borderTop: '1px solid #00A8E1' }}>
           <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center gap-4 justify-between text-sm">
-            <p>{lang === 'es' ? 'Usamos cookies de medición de Google Ads solo si las aceptas. Puedes enviar la solicitud aunque las rechaces.' : 'We use Google Ads measurement cookies only if you accept. You can apply without accepting.'} <a href="/privacy/" className="underline">{qualificationCopy[lang].policy}</a></p>
+            <p>{siteCopy[lang].cookies} <a href="/privacy/" className="underline">{qualificationCopy[lang].policy}</a></p>
             <div className="flex gap-3 flex-shrink-0">
-              <button type="button" className="px-4 py-2 border border-gray-500" onClick={() => { saveTrackingConsent(false); setTrackingConsent(false); }}>{lang === 'es' ? 'Rechazar' : 'Reject'}</button>
-              <button type="button" className="px-4 py-2" style={{ background: '#00A8E1' }} onClick={() => { saveTrackingConsent(true); setTrackingConsent(true); }}>{lang === 'es' ? 'Aceptar' : 'Accept'}</button>
+              <button type="button" className="px-4 py-2 border border-gray-500" onClick={() => { saveTrackingConsent(false); setTrackingConsent(false); }}>{siteCopy[lang].reject}</button>
+              <button type="button" className="px-4 py-2" style={{ background: '#00A8E1' }} onClick={() => { saveTrackingConsent(true); setTrackingConsent(true); }}>{siteCopy[lang].accept}</button>
             </div>
           </div>
         </div>
@@ -661,7 +658,7 @@ export default function JobPage({ lang }: { lang: Lang }) {
             </div>
             <p className="text-xs" style={{ color: '#3A3A3A', fontFamily: 'Barlow, sans-serif' }}>{t.footer.rights}</p>
             <a href="/privacy/" className="text-xs underline" style={{ color: '#8A8A8A' }}>{qualificationCopy[lang].policy}</a>
-            <button type="button" className="text-xs underline" style={{ color: '#8A8A8A' }} onClick={() => setTrackingConsent(null)}>{lang === 'es' ? 'Configurar cookies' : 'Cookie settings'}</button>
+            <button type="button" className="text-xs underline" style={{ color: '#8A8A8A' }} onClick={() => setTrackingConsent(null)}>{siteCopy[lang].settings}</button>
           </div>
         </div>
       </footer>
