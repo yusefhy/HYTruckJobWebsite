@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import emailjs from '@emailjs/browser';
 import logoImg from '../assets/logo-original.png';
+import { qualificationCopy } from '../qualification';
 
-const BenefitIcons: Record<string, JSX.Element> = {
+const BenefitIcons: Record<string, React.ReactElement> = {
   salary: (
     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="10"/>
@@ -72,6 +73,9 @@ interface FormState {
   city: string;
   cap: '' | 'yes' | 'no';
   experience: '' | 'yes' | 'no';
+  licence: '' | 'yes' | 'no';
+  workAuthorization: '' | 'yes' | 'no';
+  privacy: boolean;
 }
 
 interface FormErrors {
@@ -81,13 +85,16 @@ interface FormErrors {
   city?: string;
   cap?: string;
   experience?: string;
+  licence?: string;
+  workAuthorization?: string;
+  privacy?: string;
 }
 
 export default function JobPage({ lang }: { lang: Lang }) {
   const t: Translation = translations[lang];
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [form, setForm] = useState<FormState>({ firstName: '', lastName: '', phone: '', city: '', cap: '', experience: '' });
+  const [form, setForm] = useState<FormState>({ firstName: '', lastName: '', phone: '', city: '', cap: '', experience: '', licence: '', workAuthorization: '', privacy: false });
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -104,6 +111,9 @@ export default function JobPage({ lang }: { lang: Lang }) {
     if (!form.city) e.city = t.form.required;
     if (!form.cap) e.cap = t.form.required;
     if (!form.experience) e.experience = t.form.required;
+    if (form.licence !== 'yes') e.licence = qualificationCopy[lang].required;
+    if (form.workAuthorization !== 'yes') e.workAuthorization = qualificationCopy[lang].required;
+    if (!form.privacy) e.privacy = t.form.required;
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -122,12 +132,17 @@ export default function JobPage({ lang }: { lang: Lang }) {
           city:        form.city,
           cap:         form.cap === 'yes' ? 'Sí' : 'No',
           experience:  form.experience === 'yes' ? 'Sí' : 'No',
+          licence_ce: 'Sí',
+          authorized_to_work_in_germany: 'Sí',
           language:    lang.toUpperCase(),
           to_email:    'n.hadouchi@avanti-dl.com',
         },
         { publicKey: EMAILJS_PUBLIC_KEY },
       );
       setSubmitted(true);
+      const trackingWindow = window as Window & { dataLayer?: Record<string, unknown>[] };
+      trackingWindow.dataLayer = trackingWindow.dataLayer || [];
+      trackingWindow.dataLayer.push({ event: 'hytruckjob_application_sent', language: lang });
     } catch (err: any) {
       console.error('EmailJS error:', err);
       alert(`Error: ${JSON.stringify(err?.text || err?.message || err)}`);
@@ -520,6 +535,26 @@ export default function JobPage({ lang }: { lang: Lang }) {
                 </div>
 
                 {/* CAP / Code 95 */}
+                {(['licence', 'workAuthorization'] as const).map((field) => (
+                  <fieldset key={field}>
+                    <legend className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#8A8A8A' }}>
+                      {field === 'licence' ? qualificationCopy[lang].licence : qualificationCopy[lang].authorization} *
+                    </legend>
+                    <div className="grid grid-cols-2 gap-3">
+                      {(['yes', 'no'] as const).map((val) => (
+                        <button key={val} type="button" aria-pressed={form[field] === val}
+                          onClick={() => setForm({ ...form, [field]: val })}
+                          className="py-3 text-sm font-bold uppercase tracking-widest"
+                          style={{ background: form[field] === val ? '#00A8E1' : '#0C0C0C', border: `1px solid ${form[field] === val ? '#00A8E1' : '#2A2A2A'}`, color: form[field] === val ? '#fff' : '#8A8A8A' }}>
+                          {val === 'yes' ? t.form.yes : t.form.no}
+                        </button>
+                      ))}
+                    </div>
+                    {errors[field] && <p className="text-xs mt-1" style={{ color: '#00A8E1' }}>{errors[field]}</p>}
+                  </fieldset>
+                ))}
+
+                {/* CAP / Code 95 */}
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: '#8A8A8A', fontFamily: 'Barlow, sans-serif' }}>
                     {t.form.capLabel} *
@@ -575,6 +610,14 @@ export default function JobPage({ lang }: { lang: Lang }) {
                   {errors.experience && <p className="text-xs mt-1" style={{ color: '#00A8E1', fontFamily: 'Barlow, sans-serif' }}>{errors.experience}</p>}
                 </div>
 
+                <div>
+                  <label className="flex items-start gap-3 text-sm" style={{ color: '#B0B0B0' }}>
+                    <input type="checkbox" checked={form.privacy} onChange={(e) => setForm({ ...form, privacy: e.target.checked })} className="mt-1" />
+                    <span>{qualificationCopy[lang].privacy} <a href="/privacy/" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: '#00A8E1' }}>{qualificationCopy[lang].policy}</a></span>
+                  </label>
+                  {errors.privacy && <p className="text-xs mt-1" style={{ color: '#00A8E1' }}>{errors.privacy}</p>}
+                </div>
+
                 {/* Submit */}
                 <button
                   type="submit"
@@ -606,6 +649,7 @@ export default function JobPage({ lang }: { lang: Lang }) {
               <p className="text-xs" style={{ color: '#5A5A5A', fontFamily: 'Barlow, sans-serif' }}>{t.footer.tagline}</p>
             </div>
             <p className="text-xs" style={{ color: '#3A3A3A', fontFamily: 'Barlow, sans-serif' }}>{t.footer.rights}</p>
+            <a href="/privacy/" className="text-xs underline" style={{ color: '#8A8A8A' }}>{qualificationCopy[lang].policy}</a>
           </div>
         </div>
       </footer>

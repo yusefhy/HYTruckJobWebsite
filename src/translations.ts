@@ -647,16 +647,16 @@ const translations: Record<Lang, Translation> = {
 
 export const langPaths: Record<Lang, string> = {
   es: '/',
-  en: '/en',
-  de: '/de',
-  pl: '/pl',
-  uk: '/uk',
-  sq: '/sq',
-  ro: '/ro',
-  el: '/el',
-  ru: '/ru',
-  sr: '/sr',
-  ar: '/ar',
+  en: '/en/',
+  de: '/de/',
+  pl: '/pl/',
+  uk: '/uk/',
+  sq: '/sq/',
+  ro: '/ro/',
+  el: '/el/',
+  ru: '/ru/',
+  sr: '/sr/',
+  ar: '/ar/',
 };
 
 export const langOrder: Lang[] = ['es', 'en', 'de', 'pl', 'uk', 'sq', 'ro', 'el', 'ru', 'sr', 'ar'];
